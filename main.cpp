@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 #include <conio.h>
 #include <stdio.h>
+#include <Windows.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -25,11 +27,12 @@ void addDrink(string, string);
 void addDefaultItems();
 void printTableHeader(string, string);
 void printTwoColumn(string, string);
-void assignRandomSeats();
+vector<vector<int>> assignRandomSeats();
 
 struct movie {
     string title;
     string screenTime;
+    vector<vector<int>> seats;
 };
 
 struct food {
@@ -46,12 +49,10 @@ struct drink {
 vector<movie> movies;
 vector<food> foodList;
 vector<drink> drinkList;
-vector<vector<vector<int>>> seats;
 
 int main()
 {
     addDefaultItems();
-    assignRandomSeats();
 
     do {
         system("cls");
@@ -79,10 +80,12 @@ void viewSeatPage() {
         system("cls");
         printBanner("AVAILABLE SEATS");
         printCenter("_______Screen_______");
+
         for(int i=0; i<4; i++) {
             cout << string(6, ' ');
             for(int j=0; j<6; j++) {
-                if(seats[movieIdx][i][j] == 0)
+                int currSeat = movies[movieIdx].seats[i][j];
+                if(currSeat == 0)
                     cout << "[ ]";
                 else
                     cout << "[X]";
@@ -207,6 +210,7 @@ void addMovie(string title, string screenTime) {
     movie curr;
     curr.title = title;
     curr.screenTime = screenTime;
+    curr.seats = assignRandomSeats();
 
     movies.push_back(curr);
 }
@@ -243,18 +247,16 @@ void addDefaultItems() {
     addDrink("ICED L. TEA", "RM 3");
 }
 
-void assignRandomSeats() {
-    srand(time(0));
-
-    for(int t=0; t<movies.size(); t++) {
-        for(int i=0; i<4; i++) {
-            for(int j=0; j<6; j++) {
-                seats.push_back(vector<vector<int>>());
-                seats[t].push_back(vector<int>());
-                seats[t][i].push_back(rand()%2);
-            }
+vector<vector<int>> assignRandomSeats() {
+    srand(time(0) + movies.size());
+    vector<vector<int>> currSeats;
+    for(int i=0; i<4; i++) {
+        currSeats.push_back(vector<int>());
+        for(int j=0; j<6; j++) {
+            currSeats[i].push_back(rand()%2);
         }
     }
+    return currSeats;
 }
 
 
